@@ -105,6 +105,7 @@ pair<double, double> robot_1(double theta) {
     return p;
 }
 
+// Robot 2 knows the radius of the target point on the unit circle.
 pair<double, double> robot_2(double r) {
     double theta = 0.0;
     double robot_r;

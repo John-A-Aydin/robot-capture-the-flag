@@ -10,6 +10,7 @@ using std::numbers::pi;
 
 #define const_r 0.501306994212753
 
+namespace sim {
 double distance(pair<double, double> p1, pair<double, double> p2) {
     return sqrt((p1.first - p2.first)*(p1.first - p2.first) + (p1.second - p2.second)*(p1.second - p2.second));
 }
@@ -25,14 +26,14 @@ double radius(pair<double, double> p) {
 // Generates a random point in the unit circle.
 pair<double, double> generate_point() {
     double n;
-    double radius = 2;
+    double r = 2;
     pair<double, double> point;
-    while (radius > 1.0) {
+    while (r > 1.0) {
         n = std::rand();
         point.first = n/RAND_MAX;
         n = std::rand();
         point.second = n/RAND_MAX;
-        radius = radius_squared(point);
+        r = radius(point);
     }
     // Adding random signs
     int sign = rand() % 4;
@@ -49,32 +50,49 @@ pair<double, double> generate_point() {
 
 // Robot 1 knows the angle of the target point on the unit circle.
 // It will use this to find the point that is on average closest to the target.
-pair<double, double> robot_1(double theta) {
+pair<double, double> robot1_move(double theta) {
     double r = const_r;
     pair<double, double> p = std::make_pair(r*cos(theta), r*sin(theta));
     return p;
 }
 
-pair<double, double> robot_2(double r) {
-    double theta = 0.0;
+pair<double, double> robot2_move(double r) {
+    double theta = (std::rand()/(double)RAND_MAX)*2*pi;
     double robot_r;
     if (r <= const_r/2) {
         return std::make_pair(0.0, 0.0);
     } else {
         robot_r = sqrt((2*r*const_r) - (const_r*const_r));
     }
-    return std::make_pair(robot_r, 0.0);
+
+    return std::make_pair(robot_r*cos(theta), robot_r*sin(theta));
 }
 
-void convert_to_polar(double x, double y, double &r, double &theta) {
-    r = radius(std::make_pair(x,y));
-    theta = atan(y/x);
-    if (x == 0 && y == 0) {  // origin
+// void convert_to_polar(double x, double y, double &r, double &theta) {
+//     r = radius(std::make_pair(x,y));
+//     theta = atan(y/x);
+//     if (x == 0 && y == 0) {  // origin
+//         theta = 0;
+//     } else if (x < 0) { // Q2 & Q3
+//         theta += pi;
+//     } else if (x > 0 && y < 0) { // Q4
+//         theta += 2*pi;
+//     }
+//     return;
+// }
+
+pair<double, double> convert_to_polar(pair<double, double> p) {
+    double r = radius(p);
+    double theta = atan(p.second/p.first);
+    if (p.first == 0 && p.second == 0) {  // origin
         theta = 0;
-    } else if (x < 0) { // Q2 & Q3
+    } else if (p.first < 0) { // Q2 & Q3
         theta += pi;
-    } else if (x > 0 && y < 0) { // Q4
+    } else if (p.first > 0 && p.second < 0) { // Q4
         theta += 2*pi;
     }
-    return;
+    return std::make_pair(r, theta);
+
+}
+
 }

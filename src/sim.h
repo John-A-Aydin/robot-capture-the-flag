@@ -1,17 +1,19 @@
 #include <utility>
 #include <math.h>
 #include <numbers>
+namespace sim {
 
-double radius(pair<double, double> p);
+double radius(std::pair<double, double> p);
 
-double distance(pair<double, double> p1, pair<double,double> p2);
+double distance(std::pair<double, double> p1, std::pair<double,double> p2);
 
-pair<double, double> generate_point();
+std::pair<double, double> generate_point();
 
-pair<double, double> robot_1(double theta);
+std::pair<double, double> robot1_move(double theta);
 
-pair<double, double> robot_2(double r);
+std::pair<double, double> robot2_move(double r);
 
-void convert_to_polar(double x, double y, double &r, double &theta);
+std::pair<double, double> convert_to_polar(std::pair<double, double>);
 
+}
 
