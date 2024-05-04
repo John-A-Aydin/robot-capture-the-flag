@@ -10,20 +10,17 @@ using std::pair;
 using std::numbers::sqrt2;
 using std::numbers::pi;
 
+#define const_r 0.501306994212753
+
 
 double distance(pair<double, double>, pair<double, double>);
 double radius(pair<double, double>);
+void convert_to_polar(double x, double y, double &r, double &theta);
 
 pair<double, double> generate_point();
 pair<double, double> robot_1(double theta);
 pair<double, double> robot_2(double r);
-void convert_to_polar(double x, double y, double &r, double &theta);
 
-
-// struct uniform_point_generator {
-//     double delta;
-
-// }
 
 int main() {
     double delta = pow(0.5, 9);
@@ -51,7 +48,7 @@ int main() {
                 robot_2_wins++;
             }
         }
-        cout << "row done - x = " << x << endl;
+        //cout << "row done - x = " << x << endl;
         
     }
 
@@ -75,35 +72,35 @@ double radius(pair<double, double> p) {
 }
 
 
-// // Generates a random point in the unit circle.
-// pair<double, double> generate_point() {
-//     double n;
-//     double radius = 2;
-//     pair<double, double> point;
-//     while (radius > 1.0) {
-//         n = std::rand();
-//         point.first = n/RAND_MAX;
-//         n = std::rand();
-//         point.second = n/RAND_MAX;
-//         radius = radius_squared(point);
-//     }
-//     // Adding random signs
-//     int sign = rand() % 4;
-//     if (sign == 1) {
-//         point.first = -point.first;
-//     } else if (sign == 2) {
-//         point.second = -point.second;
-//     } else if (sign == 3) {
-//         point.first = -point.first;
-//         point.second = -point.second;
-//     }
-//     return point;
-// }
+// Generates a random point in the unit circle.
+pair<double, double> generate_point() {
+    double n;
+    double radius = 2;
+    pair<double, double> point;
+    while (radius > 1.0) {
+        n = std::rand();
+        point.first = n/RAND_MAX;
+        n = std::rand();
+        point.second = n/RAND_MAX;
+        radius = radius_squared(point);
+    }
+    // Adding random signs
+    int sign = rand() % 4;
+    if (sign == 1) {
+        point.first = -point.first;
+    } else if (sign == 2) {
+        point.second = -point.second;
+    } else if (sign == 3) {
+        point.first = -point.first;
+        point.second = -point.second;
+    }
+    return point;
+}
 
 // Robot 1 knows the angle of the target point on the unit circle.
 // It will use this to find the point that is on average closest to the target.
 pair<double, double> robot_1(double theta) {
-    double r = sqrt2/2;
+    double r = const_r;
     pair<double, double> p = std::make_pair(r*cos(theta), r*sin(theta));
     return p;
 }
@@ -111,10 +108,10 @@ pair<double, double> robot_1(double theta) {
 pair<double, double> robot_2(double r) {
     double theta = 0.0;
     double robot_r;
-    if (r <= sqrt2/4) {
+    if (r <= const_r/2) {
         return std::make_pair(0.0, 0.0);
     } else {
-        robot_r = sqrt((sqrt2*r)-0.5);
+        robot_r = sqrt((2*r*const_r) - (const_r*const_r));
     }
     return std::make_pair(robot_r, 0.0);
 }
