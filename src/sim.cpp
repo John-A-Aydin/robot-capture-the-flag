@@ -3,6 +3,7 @@
 #include <math.h>
 #include <numbers>
 #include <iomanip>
+#include "sim.h"
 
 using std::pair;
 using std::numbers::sqrt2;
