@@ -15,31 +15,18 @@ using std::pair;
 #define ROBOT_SIZE 8
 #define TARGET_SIZE 4
 
-pair<double, double> target, robot1, robot2;
-
-
 bool running;
-bool waiting_for_input;
 int frameCount, timerFPS, lastFrame, fps, frame_rate;
 
-std::string num_rounds;
-int current_rounds;
-int robot1_wins;
-int robot2_wins;
-double robot1_winrate, robot2_winrate;
-
-
-std::string score;
-
-void render();
-void update();
-void input();
-void write_score(std::string, int, int);
-int SDL_RenderFillCircle(SDL_Renderer * renderer, int x, int y, int radius);
-int SDL_RenderDrawCircle(SDL_Renderer * renderer, int x, int y, int radius);
-void render_robots(SDL_Renderer * renderer, pair<double, double> r1, pair<double, double> r2, SDL_Color r1_color, SDL_Color r2_color);
-void render_game_area(SDL_Renderer * renderer, SDL_Color color);
-void render_target(SDL_Renderer * renderer, pair<double, double> target, SDL_Color color);
+void    render();
+void    update();
+void    input();
+void    write_score(std::string, int, int);
+int     SDL_RenderFillCircle(SDL_Renderer * renderer, int x, int y, int radius);
+int     SDL_RenderDrawCircle(SDL_Renderer * renderer, int x, int y, int radius);
+void    render_robots(SDL_Renderer * renderer, pair<double, double> r1, pair<double, double> r2, SDL_Color r1_color, SDL_Color r2_color);
+void    render_game_area(SDL_Renderer * renderer, SDL_Color color);
+void    render_target(SDL_Renderer * renderer, pair<double, double> target, SDL_Color color);
 
 
 
@@ -97,6 +84,10 @@ int main() {
     int robot1_pixel_distance;
     int robot2_pixel_distance;
 
+    int trials = 0;
+    int robot1_wins = 0;
+    int robot2_wins = 0;
+
     // Entering game loop and setting frame rate
     STATE game_state = STATE::BEGIN;
     running = true;
@@ -120,7 +111,8 @@ int main() {
             if (frames_in_state == 1) {
                 robot1 = std::make_pair(0.0, 0.0);
                 robot2 = std::make_pair(0.0, 0.0);
-            } else if (frames_in_state == 30) {
+                trials++;
+            } else if (frames_in_state == 15) {
                 game_state = STATE::PLACE_TARGET;
                 frames_in_state = 0;
             }
@@ -129,7 +121,7 @@ int main() {
             if (frames_in_state == 1) {
                 target = sim::generate_point();
                 target_polar = sim::convert_to_polar(target);
-            } else if (frames_in_state == 30) {
+            } else if (frames_in_state == 15) {
                 game_state = STATE::MOVE;
                 frames_in_state = 0;
             }
@@ -139,7 +131,7 @@ int main() {
             if (frames_in_state == 1) {
                 robot1 = sim::robot1_move(target_polar.second);
                 robot2 = sim::robot2_move(target_polar.first);
-            } else if (frames_in_state == 30) {
+            } else if (frames_in_state == 15) {
                 game_state = STATE::MEASURE;
                 frames_in_state = 0;
             }
@@ -162,11 +154,13 @@ int main() {
                     SDL_RenderDrawCircle(renderer, (int)((robot1.first + 1)*WIDTH/2), (int)((robot1.second + 1)*HEIGHT/2), robot1_measure_radius);
                     SDL_SetRenderDrawColor(renderer, r2_color.r, r2_color.g, r2_color.b, 255);
                     SDL_RenderDrawCircle(renderer, (int)((robot2.first + 1)*WIDTH/2), (int)((robot2.second + 1)*HEIGHT/2), robot2_measure_radius);
+                    robot1_wins++;
                 } else {
                     SDL_SetRenderDrawColor(renderer, r1_color.r, r1_color.g, r1_color.b, 255);
                     SDL_RenderDrawCircle(renderer, (int)((robot1.first + 1)*WIDTH/2), (int)((robot1.second + 1)*HEIGHT/2), robot1_measure_radius);
                     SDL_SetRenderDrawColor(renderer, target_color.r, target_color.g, target_color.b, 255);
                     SDL_RenderDrawCircle(renderer, (int)((robot2.first + 1)*WIDTH/2), (int)((robot2.second + 1)*HEIGHT/2), robot2_measure_radius);
+                    robot2_wins++;
                 }
             } else {
                 robot1_measure_radius++;
@@ -183,6 +177,8 @@ int main() {
                 frame_rate = 15;
             }
             break;
+        case STATE::RESULTS:
+
         default:
             break;
         }
@@ -259,9 +255,9 @@ void render_target(SDL_Renderer * renderer, pair<double, double> target, SDL_Col
 
 
 
-// Updates score
-// void write_score(std::string text, int x, int y) {
-
+// // Updates score
+// void write_score(int trials, int robot1_wins, int robot2_wins) {
+//     SDL_Surface *
 // }
 
 // Updates user input
