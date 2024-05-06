@@ -115,7 +115,7 @@ int main() {
             if (frames_in_state == 1) {
                 robot1 = std::make_pair(0.0, 0.0);
                 robot2 = std::make_pair(0.0, 0.0);
-            } else if (frames_in_state == 15) {
+            } else if (frames_in_state == 5) {
                 game_state = STATE::PLACE_TARGET;
                 frames_in_state = 0;
             }
@@ -124,7 +124,7 @@ int main() {
             if (frames_in_state == 1) {
                 target = sim::generate_point();
                 target_polar = sim::convert_to_polar(target);
-            } else if (frames_in_state == 15) {
+            } else if (frames_in_state == 5) {
                 game_state = STATE::MOVE;
                 frames_in_state = 0;
             }
@@ -134,7 +134,7 @@ int main() {
             if (frames_in_state == 1) {
                 robot1 = sim::robot1_move(target_polar.second);
                 robot2 = sim::robot2_move(target_polar.first);
-            } else if (frames_in_state == 15) {
+            } else if (frames_in_state == 5) {
                 game_state = STATE::MEASURE;
                 frames_in_state = 0;
             }
