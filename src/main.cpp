@@ -268,6 +268,8 @@ void write_score(SDL_Renderer * renderer, int trials, int robot1_wins, int robot
     rect.y = HEIGHT + FONT_SIZE;
 
     SDL_RenderCopy(renderer, texture, NULL, &rect);
+    SDL_FreeSurface(surface);
+    SDL_DestroyTexture(texture);
 
     // Robot 1 wins
     text = "Robot 1 wins:      " + std::to_string(robot1_wins);
@@ -280,6 +282,8 @@ void write_score(SDL_Renderer * renderer, int trials, int robot1_wins, int robot
     rect.y = HEIGHT + FONT_SIZE*3;
     
     SDL_RenderCopy(renderer, texture, NULL, &rect);
+    SDL_FreeSurface(surface);
+    SDL_DestroyTexture(texture);
 
     // Robot 1 winrate
     text = "Robot 1 winrate: " + std::to_string(robot1_wins/(double)trials);
@@ -292,6 +296,8 @@ void write_score(SDL_Renderer * renderer, int trials, int robot1_wins, int robot
     rect.y = HEIGHT + FONT_SIZE*5;
     
     SDL_RenderCopy(renderer, texture, NULL, &rect);
+    SDL_FreeSurface(surface);
+    SDL_DestroyTexture(texture);
 
     // Robot 2 wins
     text = "Robot 2 wins:      " + std::to_string(robot2_wins);
@@ -304,6 +310,8 @@ void write_score(SDL_Renderer * renderer, int trials, int robot1_wins, int robot
     rect.y = HEIGHT + FONT_SIZE*3;
     
     SDL_RenderCopy(renderer, texture, NULL, &rect);
+    SDL_FreeSurface(surface);
+    SDL_DestroyTexture(texture);
 
     // Robot 2 winrate
     text = "Robot 2 winrate: " + std::to_string(robot2_wins/(double)trials);
