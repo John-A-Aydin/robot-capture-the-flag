@@ -1,10 +1,12 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_filesystem.h>
 #include <iostream>
 #include <utility>
 #include <math.h>
 #include <numbers>
 #include <unistd.h>
+#include <string.h>
 #include "sim.h"
 
 using std::pair;
@@ -52,11 +54,15 @@ int main() {
     if (SDL_CreateWindowAndRenderer(WIDTH + PADDING*2, HEIGHT + SCORE_HEIGHT, 0, &window, &renderer) < 0)
         std::cout << "Failed at SDL_CreateWindowAndRenderer()" << std::endl;
     // Initializing font
+    char* file_path = SDL_GetBasePath();
+    file_path[strlen(file_path)-6] = '\0';
+    file_path = strcat(file_path, "fonts/Peepo.ttf");
     if(TTF_Init() < 0)
         throw std::runtime_error(TTF_GetError());
-    TTF_Font* font = TTF_OpenFont("/home/alex/Projects/jane-st-robot-game/fonts/Peepo.ttf", FONT_SIZE);
+    TTF_Font* font = TTF_OpenFont(file_path, FONT_SIZE);
     if (!font)
         throw std::runtime_error(TTF_GetError());
+    free(file_path);
     // Setting colors
     SDL_Color main_color, r1_color, r2_color, target_color;
     
