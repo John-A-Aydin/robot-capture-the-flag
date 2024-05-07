@@ -2,6 +2,10 @@
 
 Just messing around with SDL2 to simulate [Jane Street's puzzle from April 2024](https://www.janestreet.com/puzzles/robot-capture-the-flag-index/)
 
+
+[robot-game.webm](https://github.com/John-A-Aydin/jane-st-robot-game/assets/132794075/2d0b105d-0d4d-4bb9-99b4-852330623975)
+
+
 -----
 
 
