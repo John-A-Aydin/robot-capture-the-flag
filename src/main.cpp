@@ -18,7 +18,8 @@ using std::pair;
 #define TARGET_SIZE 4
 
 bool running;
-int frameCount, timerFPS, lastFrame, fps, frame_rate;
+int frame_count, timerFPS, lastFrame, fps, frame_rate;
+int speed;
 
 void    render();
 void    update();
@@ -53,7 +54,7 @@ int main() {
     // Initializing font
     if(TTF_Init() < 0)
         throw std::runtime_error(TTF_GetError());
-    TTF_Font* font = TTF_OpenFont("/home/john/Projects/jane-st-robot-game/fonts/Peepo.ttf", FONT_SIZE);
+    TTF_Font* font = TTF_OpenFont("/home/alex/Projects/jane-st-robot-game/fonts/Peepo.ttf", FONT_SIZE);
     if (!font)
         throw std::runtime_error(TTF_GetError());
     // Setting colors
@@ -101,8 +102,8 @@ int main() {
         lastFrame = SDL_GetTicks();
         if (lastFrame >= lastTime + 1000) {
             lastTime = lastFrame;
-            fps = frameCount;
-            frameCount = 0;
+            fps = frame_count;
+            frame_count = 0;
         }
         frames_in_state++;
         render_game_area(renderer, main_color);
@@ -185,7 +186,7 @@ int main() {
         default:
             break;
         }
-        frameCount++;
+        frame_count++;
         timerFPS = SDL_GetTicks() - lastFrame;
         if (timerFPS < (1000/frame_rate)) {
             SDL_Delay((1000/frame_rate) - timerFPS);
@@ -203,7 +204,7 @@ int main() {
 // void render() {
 //     SDL_RenderDrawColor(renderer, 0x00, 0x00, 0x00, 255);
 //     SDL_RenderClear(renderer);
-//     frameCount++;
+//     frame_count++;
 //     timerFPS = SDL_GetTicks() - lastFrame;
 //     if (timerFPS < (1000/frame_rate)) {
 //         SDL_Delay((1000/frame_rate) - timerFPS);
