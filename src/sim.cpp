@@ -1,13 +1,14 @@
-#include <iostream>
 #include <utility>
 #include <math.h>
 #include <numbers>
-#include <iomanip>
+#include <ctime>
+#include <cstdlib>
 #include "sim.h"
 
 using std::pair;
 using std::numbers::sqrt2;
 using std::numbers::pi;
+using std::rand;
 
 #define const_r 0.501306994212753
 
@@ -30,9 +31,10 @@ pair<double, double> generate_point() {
     double r = 2;
     pair<double, double> point;
     while (r > 1.0) {
-        n = std::rand();
+        std::srand(std::time(0));
+        n = rand();
         point.first = n/RAND_MAX;
-        n = std::rand();
+        n = rand();
         point.second = n/RAND_MAX;
         r = radius(point);
     }
@@ -58,7 +60,8 @@ pair<double, double> robot1_move(double theta) {
 }
 
 pair<double, double> robot2_move(double r) {
-    double theta = (std::rand()/(double)RAND_MAX)*2*pi;
+    std::srand(std::time(0));
+    double theta = (rand()/(double)RAND_MAX)*2*pi;
     double robot_r;
     if (r <= const_r/2) {
         return std::make_pair(0.0, 0.0);
@@ -68,19 +71,6 @@ pair<double, double> robot2_move(double r) {
 
     return std::make_pair(robot_r*cos(theta), robot_r*sin(theta));
 }
-
-// void convert_to_polar(double x, double y, double &r, double &theta) {
-//     r = radius(std::make_pair(x,y));
-//     theta = atan(y/x);
-//     if (x == 0 && y == 0) {  // origin
-//         theta = 0;
-//     } else if (x < 0) { // Q2 & Q3
-//         theta += pi;
-//     } else if (x > 0 && y < 0) { // Q4
-//         theta += 2*pi;
-//     }
-//     return;
-// }
 
 pair<double, double> convert_to_polar(pair<double, double> p) {
     double r = radius(p);

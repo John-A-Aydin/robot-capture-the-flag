@@ -1,6 +1,8 @@
 #include <utility>
 #include <math.h>
 #include <numbers>
+#include <ctime>
+#include <cstdlib>
 namespace sim {
 
 double radius(std::pair<double, double> p);
