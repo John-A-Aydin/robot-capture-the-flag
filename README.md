@@ -6,7 +6,30 @@ Just messing around with SDL2 to simulate [Jane Street's puzzle from April 2024]
 [robot-game.webm](https://github.com/John-A-Aydin/jane-st-robot-game/assets/132794075/2d0b105d-0d4d-4bb9-99b4-852330623975)
 
 
------
+# How to Run
+
+For the animated simulator you need to download [SLD2](https://www.libsdl.org/).
+
+On Debian Linux, use
+```console
+sudo apt-get install libsdl2-dev libsdl2-ttf-dev
+```
+On macOS, use
+```console
+brew install sdl2
+```
+
+To run the animated simulator go to the root directory of the project and use
+```console
+make && ./build/robot-game
+```
+
+To run the an optimized version of the simulator without the animation use
+```console
+make sim && ./build/sim
+```
+
+
 
 
 # Game Explanation

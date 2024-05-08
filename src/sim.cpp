@@ -10,13 +10,23 @@ using std::numbers::sqrt2;
 using std::numbers::pi;
 using std::rand;
 
-#define const_r 0.501306994212753
+
 
 namespace sim {
+
+//inline constexpr double R_1  = 0.501306994212753;
+
+double distance_squared(pair<double, double> p1, pair<double, double> p2) {
+    return (p1.first - p2.first)*(p1.first - p2.first) + (p1.second - p2.second)*(p1.second - p2.second);
+}
+
 double distance(pair<double, double> p1, pair<double, double> p2) {
     return sqrt((p1.first - p2.first)*(p1.first - p2.first) + (p1.second - p2.second)*(p1.second - p2.second));
 }
 
+double radius_squared(pair<double, double> p) {
+    return p.first*p.first + p.second*p.second;
+}
 
 double radius(pair<double, double> p) {
     double t1 = p.first*p.first;
@@ -25,13 +35,15 @@ double radius(pair<double, double> p) {
 }
 
 
+
+
 // Generates a random point in the unit circle.
 pair<double, double> generate_point() {
     double n;
     double r = 2;
     pair<double, double> point;
+    std::srand(std::time(0));
     while (r > 1.0) {
-        std::srand(std::time(0));
         n = rand();
         point.first = n/RAND_MAX;
         n = rand();
@@ -54,22 +66,32 @@ pair<double, double> generate_point() {
 // Robot 1 knows the angle of the target point on the unit circle.
 // It will use this to find the point that is on average closest to the target.
 pair<double, double> robot1_move(double theta) {
-    double r = const_r;
+    double r = R_1;
     pair<double, double> p = std::make_pair(r*cos(theta), r*sin(theta));
     return p;
 }
 
 pair<double, double> robot2_move(double r) {
-    std::srand(std::time(0));
     double theta = (rand()/(double)RAND_MAX)*2*pi;
     double robot_r;
-    if (r <= const_r/2) {
+    if (r <= R_1/2) {
         return std::make_pair(0.0, 0.0);
     } else {
-        robot_r = sqrt((2*r*const_r) - (const_r*const_r));
+        robot_r = sqrt((2*r*R_1) - (R_1*R_1));
     }
 
     return std::make_pair(robot_r*cos(theta), robot_r*sin(theta));
+}
+
+pair<double, double> robot2_move_const(double r) {
+    double robot_r;
+    if (r <= R_1/2) {
+        return std::make_pair(0.0, 0.0);
+    } else {
+        robot_r = sqrt((2*r*R_1) - (R_1*R_1));
+    }
+
+    return std::make_pair(robot_r, 0.0);
 }
 
 pair<double, double> convert_to_polar(pair<double, double> p) {
