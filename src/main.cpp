@@ -7,10 +7,13 @@
 #include <numbers>
 #include <unistd.h>
 #include <string.h>
+#include <cstring>
 #include "sim.h"
 #include "circle.h"
 
 using std::pair;
+using std::cout;
+using std::endl;
 
 #define WIDTH 720
 #define HEIGHT 720
@@ -20,9 +23,11 @@ using std::pair;
 #define ROBOT_SIZE 8
 #define TARGET_SIZE 4
 
-bool running;
+bool running, show_lines;
 int frame_count, timerFPS, lastFrame, fps, frame_rate;
 int speed;
+
+Uint8 prev_L = 0;
 
 void    render();
 void    update();
@@ -31,6 +36,8 @@ void    write_score(SDL_Renderer* renderer, int trials, int robot1_wins, int rob
 void    render_robots(SDL_Renderer * renderer, pair<double, double> r1, pair<double, double> r2, SDL_Color r1_color, SDL_Color r2_color);
 void    render_game_area(SDL_Renderer * renderer, SDL_Color color);
 void    render_target(SDL_Renderer * renderer, pair<double, double> target, SDL_Color color);
+void    draw_lines(SDL_Renderer* renderer, pair<double, double> target, pair<double, double> r1, pair<double, double> r2,
+                   SDL_Color target_color, SDL_Color r1_color, SDL_Color r2_color);
 
 
 
@@ -44,7 +51,12 @@ enum STATE {
     RESULTS,
 };
 
-int main() {
+int main(int argc, char* argv[]) {
+    show_lines = false;
+    for (int i = 1; i < argc; i++) {
+        if (std::strcmp(argv[i], "-l") == 0)
+            show_lines = true;
+    }
     // Creating renderer and window
     SDL_Renderer* renderer;
     SDL_Window* window;
@@ -113,7 +125,9 @@ int main() {
         frames_in_state++;
         render_game_area(renderer, main_color);
         render_robots(renderer, robot1, robot2, r1_color, r2_color);
-        SDL_RenderDrawDashedCircle(renderer, WIDTH/2 + PADDING, HEIGHT/2 , WIDTH/4, 8);
+        if (show_lines) {
+            draw_lines(renderer, target, robot1, robot2, target_color, r1_color, r2_color);
+        }
         write_score(renderer, trials, robot1_wins, robot2_wins, main_color, font);
         switch (game_state)
         {
@@ -352,6 +366,11 @@ void input() {
     }
     if (keystates[SDL_SCANCODE_ESCAPE])
         running = false;
+    if (keystates[SDL_SCANCODE_L] && !prev_L)
+        show_lines = !show_lines;
+    //cout << keystates[SDL_SCANCODE_L] << " " << prev_keystates[SDL_SCANCODE_L] << endl;
+    prev_L = keystates[SDL_SCANCODE_L];
+    
     // if (game_state == STATE::ENTRY || game_state == STATE::RESULTS) {
     //     if (keystates[SDL_SCANCODE_KP_ENTER])
     //         game_state = STATE::SIMULATING;
@@ -379,5 +398,17 @@ void input() {
     //     if (keystates[SDL_SCANCODE_9])
     //         num_rounds.push_back('9');
     // }
+}
+
+void draw_lines(SDL_Renderer* renderer, pair<double, double> target, pair<double, double> r1, pair<double, double> r2,
+                SDL_Color target_color, SDL_Color r1_color, SDL_Color r2_color) {
+    SDL_SetRenderDrawColor(renderer, r1_color.r, r1_color.g, r1_color.b, 255);
+    SDL_RenderDrawDottedCircle(renderer, WIDTH/2 + PADDING, HEIGHT/2, WIDTH/4, 8);
+    SDL_SetRenderDrawColor(renderer, target_color.r, target_color.g, target_color.b, 255);
+    int radius = sim::convert_to_polar(target).first * HEIGHT/2;
+    SDL_RenderDrawDottedCircle(renderer, WIDTH/2 + PADDING, HEIGHT/2, radius, 8);
+    
+
+
 }
 
