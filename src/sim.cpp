@@ -105,7 +105,12 @@ pair<double, double> convert_to_polar(pair<double, double> p) {
         theta += 2*pi;
     }
     return std::make_pair(r, theta);
+}
 
+pair<double, double> convert_to_cartesian(pair<double, double> p) {
+    double x = p.first * cos(p.second);
+    double y = p.first * sin(p.second);
+    return std::make_pair(x, y);
 }
 
 }

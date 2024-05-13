@@ -25,5 +25,7 @@ std::pair<double, double> robot2_move_const(double r);
 
 std::pair<double, double> convert_to_polar(std::pair<double, double>);
 
+std::pair<double, double> convert_to_cartesian(std::pair<double, double>);
+
 }
 

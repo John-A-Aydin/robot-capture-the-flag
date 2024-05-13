@@ -38,6 +38,7 @@ void    render_game_area(SDL_Renderer * renderer, SDL_Color color);
 void    render_target(SDL_Renderer * renderer, pair<double, double> target, SDL_Color color);
 void    draw_lines(SDL_Renderer* renderer, pair<double, double> target, pair<double, double> r1, pair<double, double> r2,
                    SDL_Color target_color, SDL_Color r1_color, SDL_Color r2_color);
+void    SDL_RenderDrawDottedLine(SDL_Renderer* renderer, int x0, int y0, int x1, int y1, int spacing);
 
 
 
@@ -125,7 +126,7 @@ int main(int argc, char* argv[]) {
         frames_in_state++;
         render_game_area(renderer, main_color);
         render_robots(renderer, robot1, robot2, r1_color, r2_color);
-        if (show_lines) {
+        if (show_lines && game_state) {
             draw_lines(renderer, target, robot1, robot2, target_color, r1_color, r2_color);
         }
         write_score(renderer, trials, robot1_wins, robot2_wins, main_color, font);
@@ -405,10 +406,30 @@ void draw_lines(SDL_Renderer* renderer, pair<double, double> target, pair<double
     SDL_SetRenderDrawColor(renderer, r1_color.r, r1_color.g, r1_color.b, 255);
     SDL_RenderDrawDottedCircle(renderer, WIDTH/2 + PADDING, HEIGHT/2, WIDTH/4, 8);
     SDL_SetRenderDrawColor(renderer, target_color.r, target_color.g, target_color.b, 255);
-    int radius = sim::convert_to_polar(target).first * HEIGHT/2;
-    SDL_RenderDrawDottedCircle(renderer, WIDTH/2 + PADDING, HEIGHT/2, radius, 8);
-    
-
-
+    double target_r = sim::convert_to_polar(target).first;
+    SDL_RenderDrawDottedCircle(renderer, WIDTH/2 + PADDING, HEIGHT/2, target_r * HEIGHT/2, 8);
+    // Drawing Chord
+    if (r2.first == 0 && r2.second == 0) return;
+    SDL_SetRenderDrawColor(renderer, r2_color.r, r2_color.g, r2_color.b, 255);
+    pair<double, double> r2_polar = sim::convert_to_polar(r2);
+    double chord_angle = asin(sqrt(target_r*target_r - r2_polar.first*r2_polar.first)/target_r);
+    pair<double, double> chord_p1 = sim::convert_to_cartesian(std::make_pair(target_r, r2_polar.second + chord_angle));
+    pair<double, double> chord_p2 = sim::convert_to_cartesian(std::make_pair(target_r, r2_polar.second - chord_angle));
+    SDL_RenderDrawDottedLine(renderer, (chord_p1.first + 1)*HEIGHT/2 + PADDING, (chord_p1.second + 1)*HEIGHT/2, (chord_p2.first + 1)*HEIGHT/2 + PADDING, (chord_p2.second + 1)*HEIGHT/2, 6);
+    SDL_RenderDrawDottedLine(renderer, (target.first + 1)*HEIGHT/2 + PADDING, (target.second + 1)*HEIGHT/2, (r1.first + 1)*HEIGHT/2 + PADDING, (r1.second + 1)*HEIGHT/2, 6);
 }
 
+void SDL_RenderDrawDottedLine(SDL_Renderer* renderer, int x0, int y0, int x1, int y1, int spacing) {
+    int dx =  abs(x1-x0), sx = x0<x1 ? 1 : -1;
+    int dy = -abs(y1-y0), sy = y0<y1 ? 1 : -1;
+    int err = dx+dy, e2;
+    int count = 0;
+    while (1) {
+        if (count % spacing == 0) {SDL_RenderDrawPoint(renderer,x0,y0);}
+        if (x0==x1 && y0==y1) break;
+        e2 = 2*err;
+        if (e2 > dy) { err += dy; x0 += sx; }
+        if (e2 < dx) { err += dx; y0 += sy; }
+        count ++;
+    }
+}
