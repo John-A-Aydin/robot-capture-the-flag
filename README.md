@@ -16,7 +16,7 @@ sudo apt-get install libsdl2-dev libsdl2-ttf-dev
 ```
 On macOS, use
 ```console
-brew install sdl2
+brew install sdl2 sdl2_ttf
 ```
 
 To run the animated simulator go to the root directory of the project and use
