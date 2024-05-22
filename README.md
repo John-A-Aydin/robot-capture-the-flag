@@ -45,12 +45,59 @@ Robot 1 is programmed to play a fixed distance along the detected angle θ, but 
 
 # Solution
 
+The first step in solving this problem is recognizing the distribution of points where the flag can be placed. Since the flag is placed uniformly at random over the unit circle the PDF of the flagthat is simply a constant.
+
+$$
+f(x,y) = C
+$$
+
+-----
+
 The first step in solving this problem is finding the optimal strategies for the robots.
 
-Let $d_{1}$ and $d_{2}$ be Robot 1 and Robot 2's distances to the flag.
+// Let $d_{1}$ and $d_{2}$ be Robot 1 and Robot 2's distances to the flag.
 
-Since Robot 2 knows the radius of the flag on the unit circle, $r$, and will know Robot 1's fixed radius, $R_{1}$, it will allways know Robot 1's distance to the flag, $d_{1}$.
+Since Robot 2 knows the radius of the flag, $R_f$, and will know Robot 1's fixed radius, $R_{1}$, it will always know Robot 1's distance to the flag, $d_{1}$.
 
-Thinking about this problem in terms of polar coordinates, Robot 2 make a move that maximizes the interval of $\theta$ where $d_{2}\lt d_{1}$.
 
+
+The positions of the flag that would give Robot 2 the win can be defined by the disk: $r\lt d_1$ centered at whatever point Robot 2 moves to. Using this information, Robot 2 should choose a point where the circle $r=R_f$ is maximally covered by the disk of winning points for Robot 2.
+
+If $R_f$ is less than $\large\frac{R_1}{2}$, Robot 2 can simply stay at the origin, knowing that the circle $r = R_f$ is completely within Robot 2's disk of winning points.
+
+If $R_f$ is greater than $\large\frac{R_1}{2}$, this point happens to be the center of a chord of the circle $r=R_f$ with chord length $2d_1$. This chord is shown in the simulation as a dotted red line passing through Robot 2.
+
+Robot 2's strategy can be expressed by the piecewise function:
+
+$$
+R_2 = \begin{cases}
+   0 &\text{if } \;\;0 \le R_f \le \frac{R_1}{2}\\
+   R_1(2R_f-R_1) &\text{if } \;\;\frac{R_1}{2} \lt R_f \le 1\\
+\end{cases} \tag{1}
+$$
+
+With this strategy, we can construct another piecewise function that tells us Robot 2's chance of winning for any given value of $R_f$. This function returns the amount of the circle covered by Robot 2's winning disk over the total length of the circle.
+$$
+P(\text{Robot 2}) = \begin{cases}
+   1 &\text{if } \;\;0 \le R_f \le \frac{R_1}{2}\\
+   {\large\frac{1}{\pi}}\arcsin\Big(\frac{|R_f - R_1|}{R_f}\Big) &\text{if } \;\;\frac{R_1}{2} \lt R_f \le 1\\
+\end{cases} \tag{2}
+$$
+
+Next we integrate over (2) with respect to $R_f$ while accounting for the PDF of $R_f$ to find the total probability of Robot 2 winning.
+
+$$
+{\large\int_{0}^{2\pi}\int_{0}^{\frac{R_1}{2}}} \frac{r}{\pi}\;  dR_fd\theta \; + \; 
+{\large\int_{\frac{R_1}{2}}^{1}} \frac{2}{\pi}\arcsin\Bigg(\frac{|R_f - R_1|}{R_f}\Bigg)R_f\; dR_f \tag{3}
+$$
+
+
+
+
+
+-------
+
+Robot 2 then needs to maximize the angle on the circle given by $r = R_f$ where $d_2$, Robot 2's distance to the flag, is less than $d_1$.
+
+To achieve this Robot 2 needs to move to the center of a chord of length $2d_1$
 The ideal 
