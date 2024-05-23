@@ -80,7 +80,7 @@ With this strategy, we can construct another piecewise function that tells us Ro
 $$
 P(\text{Robot 2}) = \begin{cases}
    1 &\text{if } \;\;0 \le R_f \le \frac{R_1}{2}\\
-   {\large\frac{1}{\pi}}\arcsin\Big(\frac{|R_f - R_1|}{R_f}\Big) &\text{if } \;\;\frac{R_1}{2} \lt R_f \le 1\\
+   {\large\frac{1}{\pi}}\arcsin\Big(\frac{|R_f - R_1|}{R_f}\Big) &\text{if } \quad\frac{R_1}{2} \lt R_f \le 1\\
 \end{cases} \tag{2}
 $$
 
