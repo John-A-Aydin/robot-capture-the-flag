@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <iostream>
 #include <cstring>
+#include <chrono>
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
@@ -38,6 +39,7 @@ __global__ void simChunk(double* y_min, double* y_max, long int* r1_wins, long i
 }
 
 int main(int argc, char* argv[]) {
+    auto start = std::chrono::high_resolution_clock::now();
     int accuracy = 10;
     for (int i = 1; i < argc; i++) {
         if (std::strcmp(argv[i], "-a") == 0) {
@@ -105,8 +107,12 @@ int main(int argc, char* argv[]) {
 
     double robot1_winrate = r1_total/(double)(total_trials*2) + 0.5 - temp;
     double robot2_winrate = r2_total/(double)(total_trials*2) + temp;
+
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
     //cout << r1_wins[0] << endl;
     cout << endl << std::setprecision(10) << "Robot 1 winrate: "<< robot1_winrate << endl << "Robot 2 winrate: " << robot2_winrate << endl;
-
+    cout << "Trials: " << total_trials << endl;
+    cout << "Took:   " << duration.count() << "ms" << endl;
     return 0;
 }
