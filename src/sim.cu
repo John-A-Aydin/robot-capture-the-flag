@@ -3,111 +3,38 @@
 #include <numbers>
 #include <ctime>
 #include <cstdlib>
+#include <iomanip>
+#include <iostream>
+#include <cstring>
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-#include "math_functions.h"
 
+using std::endl;
+using std::cout;
 
-using std::pair;
-using std::numbers::sqrt2;
-using std::numbers::pi;
-using std::rand;
+#define THREADS 512
 
+inline constexpr double R_1  = 0.501306994212753;
 
-
-
-
-//inline constexpr double R_1  = 0.501306994212753;
-
-double distance_squared(pair<double, double> p1, pair<double, double> p2) {
-    return (p1.first - p2.first)*(p1.first - p2.first) + (p1.second - p2.second)*(p1.second - p2.second);
-}
-
-double distance(pair<double, double> p1, pair<double, double> p2) {
-    return sqrt((p1.first - p2.first)*(p1.first - p2.first) + (p1.second - p2.second)*(p1.second - p2.second));
-}
-
-double radius_squared(pair<double, double> p) {
-    return p.first*p.first + p.second*p.second;
-}
-
-double radius(pair<double, double> p) {
-    double t1 = p.first*p.first;
-    double t2 = p.second*p.second;
-    return sqrt(t1 + t2);
-}
-
-// Robot 1 knows the angle of the target point on the unit circle.
-// It will use this to find the point that is on average closest to the target.
-pair<double, double> robot1_move(double theta) {
-    double r = R_1;
-    pair<double, double> p = std::make_pair(r*cos(theta), r*sin(theta));
-    return p;
-}
-
-pair<double, double> robot2_move(double r) {
-    double theta = (rand()/(double)RAND_MAX)*2*pi;
-    double robot_r;
-    if (r <= R_1/2) {
-        return std::make_pair(0.0, 0.0);
-    } else {
-        robot_r = sqrt((2*r*R_1) - (R_1*R_1));
-    }
-
-    return std::make_pair(robot_r*cos(theta), robot_r*sin(theta));
-}
-
-pair<double, double> robot2_move_const(double r) {
-    double robot_r;
-    if (r <= R_1/2) {
-        return std::make_pair(0.0, 0.0);
-    } else {
-        robot_r = sqrt((2*r*R_1) - (R_1*R_1));
-    }
-
-    return std::make_pair(robot_r, 0.0);
-}
-
-pair<double, double> convert_to_polar(pair<double, double> p) {
-    double r = radius(p);
-    double theta = atan(p.second/p.first);
-    if (p.first == 0 && p.second == 0) {  // origin
-        theta = 0;
-    } else if (p.first < 0) { // Q2 & Q3
-        theta += pi;
-    } else if (p.first > 0 && p.second < 0) { // Q4
-        theta += 2*pi;
-    }
-    return std::make_pair(r, theta);
-}
-
-pair<double, double> convert_to_cartesian(pair<double, double> p) {
-    double x = p.first * cos(p.second);
-    double y = p.first * sin(p.second);
-    return std::make_pair(x, y);
-}
-
-
-
-__global__ void simChunk(double* x_min, double* x_max, double* y_min, double* y_max, long int* r1_wins, long int* r2_wins, double delta) {
+__global__ void simChunk(double* y_min, double* y_max, long int* r1_wins, long int* r2_wins, double delta) {
     int i = threadIdx.x;
-    for (double x = x_min[i]; x <= x_max[i]; x += delta) {
-        for (double y = y_min[i]; y_max[i] <= 1.0; y += delta) {
-            pair<double, double> target = std::make_pair(x,y);
-            double r;
-            double theta;
-            pair<double, double> target_polar = sim::convert_to_polar(target);            
-            if (target_polar.first > 1.0) continue;
-            trials ++;
-            pair<double, double> robot_1_p = sim::robot1_move(target_polar.second);
-            pair<double, double> robot_2_p = sim::robot2_move_const(target_polar.first);
-            double robot_1_distance = sim::distance_squared(robot_1_p, target);
-            double robot_2_distance = sim::distance_squared(robot_2_p, target);
-
-            if (robot_1_distance < robot_2_distance) {
-                robot_1_wins++;
+    for (double x = 0.0; x <= 1.0; x += delta) {
+        for (double y = y_min[i]; y <= y_max[i]; y += delta) {
+            double r_target = sqrt(x*x + y*y);
+            if (r_target > 1.0) continue; // Outside of game area
+            if (r_target <= R_1/2) { // Robot 2 wins by default
+                r2_wins[i]++;
+                continue;
+            }
+            double theta = atan(y/x);
+            double r1_distance = r_target - R_1;
+            // Calculating distance between robot 2 and target
+            double x_r2 = sqrt((2*r_target*R_1) - (R_1*R_1));
+            double r2_distance = sqrt((x - x_r2)*(x - x_r2) + y*y);
+            if (r2_distance < r1_distance) {
+                r2_wins[i]++;
             } else {
-                robot_2_wins++;
+                r1_wins[i]++;
             }
         }   
     }
@@ -137,34 +64,47 @@ int main(int argc, char* argv[]) {
     
     double delta = pow(0.5, accuracy);
 
-    long int robot_1_wins = 0;
-    long int robot_2_wins = 0;
-    for (double x = 0.0; x <= 1.0; x += delta) {
-        for (double y = -1.0; y <= 1.0; y += delta) {
-            pair<double, double> target = std::make_pair(x,y);
-            double r;
-            double theta;
-            pair<double, double> target_polar = sim::convert_to_polar(target);            
-            if (target_polar.first > 1.0) continue;
-            trials ++;
-            pair<double, double> robot_1_p = sim::robot1_move(target_polar.second);
-            pair<double, double> robot_2_p = sim::robot2_move_const(target_polar.first);
-            double robot_1_distance = sim::distance_squared(robot_1_p, target);
-            double robot_2_distance = sim::distance_squared(robot_2_p, target);
+    double y_min[THREADS] = {0};
+    double y_max[THREADS] = {0};
+    long int r1_wins[THREADS] = {0};
+    long int r2_wins[THREADS] = {0};
 
-            if (robot_1_distance < robot_2_distance) {
-                robot_1_wins++;
-            } else {
-                robot_2_wins++;
-            }
-        }   
+    for (int i = 0; i < THREADS; i++) {
+        y_min[i] = (1.0/THREADS)*(double)i;
+        y_max[i] = (1.0/THREADS)*(double)(i+1) - delta;
+    }
+    y_max[THREADS] = 1.0;
+    
+    double* cuda_y_min = 0;
+    double* cuda_y_max = 0;
+    long int* cuda_r1_wins = 0;
+    long int* cuda_r2_wins = 0;
+
+    cudaMalloc(&cuda_y_min, sizeof(y_min));
+    cudaMalloc(&cuda_y_max, sizeof(y_max));
+    cudaMalloc(&cuda_r1_wins, sizeof(r1_wins));
+    cudaMalloc(&cuda_r2_wins, sizeof(r2_wins));
+
+    cudaMemcpy(cuda_y_min, y_min, sizeof(y_min), cudaMemcpyHostToDevice);
+    cudaMemcpy(cuda_y_max, y_max, sizeof(y_max), cudaMemcpyHostToDevice);
+
+    simChunk <<< 1, THREADS >>> (cuda_y_min, cuda_y_max, cuda_r1_wins, cuda_r2_wins, delta);
+
+    cudaMemcpy(r1_wins, cuda_r1_wins, sizeof(r1_wins), cudaMemcpyDeviceToHost);
+    cudaMemcpy(r2_wins, cuda_r2_wins, sizeof(r2_wins), cudaMemcpyDeviceToHost);
+    long int r1_total, r2_total = 0;
+
+    for (int i = 0; i < THREADS; i++) {
+        r1_total += r1_wins[i];
+        r2_total += r2_wins[i];
+        trials = trials + r1_wins[i] + r2_wins[i];
     }
 
-    double temp = sim::R_1*sim::R_1/8;
+    double temp = R_1*R_1/8;
 
-    double robot1_winrate = robot_1_wins/(double)(trials*2) + 0.5 - temp;
-    double robot2_winrate = robot_2_wins/(double)(trials*2) + temp;
-    
+    double robot1_winrate = r1_total/(double)(trials*2) + 0.5 - temp;
+    double robot2_winrate = r2_total/(double)(trials*2) + temp;
+    //cout << r1_wins[0] << endl;
     cout << endl << std::setprecision(10) << "Robot 1 winrate: "<< robot1_winrate << endl << "Robot 2 winrate: " << robot2_winrate << endl;
 
     return 0;
