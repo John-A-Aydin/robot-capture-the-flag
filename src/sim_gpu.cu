@@ -18,17 +18,18 @@ __global__ void simChunk(double* y_min, double* y_max, long int* r1_wins, long i
     for (double x = 0.0; x <= 1.0; x += delta) {
         for (double y = y_min[i]; y <= y_max[i]; y += delta) {
             double r_target = sqrt(x*x + y*y);
-            if (r_target > 1.0) continue; // Outside of game area
+            // Outside of game area
+            if (r_target > 1.0) continue;
             trials[i]++;
-            if (r_target <= R_1/2) { // Robot 2 wins by default
+            // Robot 2 wins by default
+            if (r_target <= R_1/2) {
                 r2_wins[i]++;
                 continue;
             }
-            double theta = atan(y/x);
             double r1_distance = abs(r_target - R_1);
-            // Calculating distance between robot 2 and target
-            double x_r2 = sqrt((2*r_target*R_1) - (R_1*R_1));
-            double r2_distance = sqrt((x - x_r2)*(x - x_r2) + y*y);
+            // Robot 2's optimal strategy given the target's radius
+            double r2_x = sqrt((2*r_target*R_1) - (R_1*R_1));
+            double r2_distance = sqrt((x - r2_x)*(x - r2_x) + y*y);
             if (r2_distance <= r1_distance) {
                 r2_wins[i]++;
             } else {
@@ -39,7 +40,6 @@ __global__ void simChunk(double* y_min, double* y_max, long int* r1_wins, long i
 }
 
 int main(int argc, char* argv[]) {
-    auto start = std::chrono::high_resolution_clock::now();
     int accuracy = 10;
     for (int i = 1; i < argc; i++) {
         if (std::strcmp(argv[i], "-a") == 0) {
@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
             }
         }
     }
-    
+    auto start = std::chrono::high_resolution_clock::now();
     double delta = pow(0.5, accuracy);
 
     double y_min[THREADS] = {0};
@@ -110,7 +110,7 @@ int main(int argc, char* argv[]) {
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    //cout << r1_wins[0] << endl;
+    
     cout << endl << std::setprecision(10) << "Robot 1 winrate: "<< robot1_winrate << endl << "Robot 2 winrate: " << robot2_winrate << endl;
     cout << "Trials: " << total_trials << endl;
     cout << "Took:   " << duration.count() << "ms" << endl;
