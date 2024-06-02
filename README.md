@@ -1,6 +1,6 @@
 # WIP
 
-Just messing around with SDL2 to simulate [Jane Street's puzzle from April 2024](https://www.janestreet.com/puzzles/robot-capture-the-flag-index/)
+Just messing around with SDL2 and CUDA to simulate [Jane Street's puzzle from April 2024](https://www.janestreet.com/puzzles/robot-capture-the-flag-index/)
 
 
 [robot-game.webm](https://github.com/John-A-Aydin/jane-st-robot-game/assets/132794075/2d0b105d-0d4d-4bb9-99b4-852330623975)
@@ -28,6 +28,25 @@ To run the an optimized version of the simulator without the animation use
 ```console
 make sim && ./build/sim
 ```
+
+To run the optimized simulator with higher accuracy use
+```console
+make sim && ./build/sim -a <ACCURACY>
+```
+
+The default accuracy is 10 which creates a grid of $2^{(10\times 2)}$ points that are checked.
+
+There is a further optimized version of the simulation, but you'll need the CUDA Toolkit and an Nvidia GPU to run it.
+
+```console
+mkdir build
+nvcc src/sim_gpu.cu -o build/sim_gpu
+./build/sim_gpu
+```
+
+
+
+
 
 
 

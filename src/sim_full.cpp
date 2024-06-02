@@ -3,6 +3,7 @@
 #include <math.h>
 #include <iomanip>
 #include <cstring>
+#include <chrono>
 #include "sim.h"
 
 using std::cout;
@@ -33,13 +34,13 @@ int main(int argc, char* argv[]) {
             }
         }
     }
-    
+    auto start = std::chrono::high_resolution_clock::now();
     double delta = pow(0.5, accuracy);
 
     long int robot_1_wins = 0;
     long int robot_2_wins = 0;
     for (double x = 0.0; x <= 1.0; x += delta) {
-        for (double y = -1.0; y <= 1.0; y += delta) {
+        for (double y = 0.0; y <= 1.0; y += delta) {
             pair<double, double> target = std::make_pair(x,y);
             double r;
             double theta;
@@ -64,7 +65,13 @@ int main(int argc, char* argv[]) {
     double robot1_winrate = robot_1_wins/(double)(trials*2) + 0.5 - temp;
     double robot2_winrate = robot_2_wins/(double)(trials*2) + temp;
     
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+
     cout << endl << std::setprecision(10) << "Robot 1 winrate: "<< robot1_winrate << endl << "Robot 2 winrate: " << robot2_winrate << endl;
+
+    cout << "Trials: " << trials << endl;
+    cout << "Took:   " << duration.count() << "ms" << endl;
 
     return 0;
 }
