@@ -70,7 +70,7 @@ $$
 f(x,y) = C
 $$
 
-Knowing that the volume under this PDF is 1 and the area of the unit circle is $\pi$, the value for $C$ is $\frac{1}{\pi}$
+Since the volume under this PDF is 1 and the area of the unit circle is $\pi$, the value for $C$ is $\frac{1}{\pi}$
 
 ### Note:
 
