@@ -64,20 +64,22 @@ Robot 1 is programmed to play a fixed distance along the detected angle θ, but 
 
 # Solution
 
-The first step in solving this problem is recognizing the distribution of points where the flag can be placed. Since the flag is placed uniformly at random over the unit circle the PDF of the flagthat is simply a constant.
+The first step in solving this problem is recognizing the distribution of points where the flag can be placed. Since the flag is placed uniformly at random over the unit circle, the probability density function (PDF) of the flag being placed at any point $(x, y)$ is a constant.
 
 $$
 f(x,y) = C
 $$
 
+Knowing that the volume under this PDF is 1 and the area of the unit circle is $\pi$, the value for $C$ is $\frac{1}{\pi}$
+
+### Note:
+
+Here's a [cool video](https://www.youtube.com/watch?v=4y_nmpv-9lI) I found about generating random points in terms of polar coordinates that discusses a unique problem I encountered.
 -----
 
-The first step in solving this problem is finding the optimal strategies for the robots.
 
-// Let $d_{1}$ and $d_{2}$ be Robot 1 and Robot 2's distances to the flag.
 
-Since Robot 2 knows the radius of the flag, $R_f$, and will know Robot 1's fixed radius, $R_{1}$, it will always know Robot 1's distance to the flag, $d_{1}$.
-
+Next, the optimal strategies for Robot 1 and 2 need to be found. Since Robot 2 knows the radius of the flag, $R_f$, and will know Robot 1's fixed radius, $R_{1}$, it will always know Robot 1's distance to the flag, $d_{1}$.
 
 
 The positions of the flag that would give Robot 2 the win can be defined by the disk: $r\lt d_1$ centered at whatever point Robot 2 moves to. Using this information, Robot 2 should choose a point where the circle $r=R_f$ is maximally covered by the disk of winning points for Robot 2.
