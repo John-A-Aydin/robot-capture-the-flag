@@ -76,7 +76,7 @@ Knowing that the volume under this PDF is 1 and the area of the unit circle is $
 
 Here's a [cool video](https://www.youtube.com/watch?v=4y_nmpv-9lI) I found about generating random points in terms of polar coordinates that discusses a unique problem I encountered.
 
-
+(This project uses rejection sampling)
 
 -----
 
