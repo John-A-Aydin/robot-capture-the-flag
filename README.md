@@ -88,10 +88,11 @@ Robot 2's strategy can be expressed by the piecewise function:
 
 $$
 R_2 =
-\begin{cases}
-   0 &\text{if } \quad 0 \le R_f \le \frac{R_1}{2}\\
-   R_1(2R_f-R_1) &\text{if } \quad\frac{R_1}{2} \lt R_f \le 1\\
-\end{cases} \tag{1}
+   \begin{cases}
+      0 &\text{if } \quad 0 \le R_f \le \frac{R_1}{2}\\
+      R_1(2R_f-R_1) &\text{if } \quad\frac{R_1}{2} \lt R_f \le 1
+   \end{cases}
+\tag{1}
 $$
 
 ---
