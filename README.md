@@ -45,12 +45,6 @@ nvcc src/sim_gpu.cu -o build/sim_gpu
 ```
 
 
-
-
-
-
-
-
 # Game Explanation
 
 The full explanation can be found [here](https://www.janestreet.com/puzzles/robot-capture-the-flag-index/).
@@ -72,7 +66,8 @@ $$
 
 Since the volume under this PDF is 1 and the area of the unit circle is $\pi$, the value for $C$ is $\frac{1}{\pi}$
 
-### Note:
+---
+**Note:**
 
 Here's a [cool video](https://www.youtube.com/watch?v=4y_nmpv-9lI) I found about generating random points in terms of polar coordinates that discusses a unique problem I encountered.
 
@@ -100,7 +95,13 @@ R_2 = \begin{cases}
 \end{cases} \tag{1}
 $$
 
+---
+**Note:** We still don't know Robot 1's fixed radius $R_{1}$. This will come in later.
+
+---
+
 With this strategy, we can construct another piecewise function that tells us Robot 2's chance of winning for any given value of $R_f$. This function returns the amount of the circle covered by Robot 2's winning disk over the total length of the circle.
+
 $$
 P(\text{Robot 2}) = \begin{cases}
    1 &\text{if } \quad 0 \le R_f \le \frac{R_1}{2}\\
@@ -108,20 +109,29 @@ P(\text{Robot 2}) = \begin{cases}
 \end{cases} \tag{2}
 $$
 
-Next we integrate over (2) with respect to $R_f$ while accounting for the PDF of $R_f$ to find the total probability of Robot 2 winning.
+Next we integrate over (2) with respect to $R_f$ (the radius of the flag) while accounting for the PDF of $R_f$ to find the total probability of Robot 2 winning.
 
 $$
 {\large\int_{0}^{2\pi}\int_{0}^{\frac{R_1}{2}}} \frac{r}{\pi}\quad  dR_fd\theta \quad + \quad 
 {\large\int_{\frac{R_1}{2}}^{1}} \frac{2}{\pi}\arcsin\Bigg(\frac{|R_f - R_1|}{R_f}\Bigg)R_f\quad dR_f \tag{3}
 $$
 
+---
+**Note:** In the left integral we are integrating over $R_{f}$ and $\theta$, but in the right integral we only integrate over $R_{f}$. This is because the bottom half of the piecewise function in (2) already accounts for $\theta$ by looking at the probability that a random value of $\theta$ will translate to a win for Robot 2.
 
+---
 
+Since these Robots are incredibly smart, Robot 1 has already figured out this equation for Robot 2's winrate and will try to minimize it by choosing an optimal fixed radius. As far as I know, this integral has no algebraic solution, but using online tools we can minimize it. 
 
+Minimizing this integral with $R_{1}$ gives a value of
 
--------
+$$
+R_{1} \approx 0.501306994212753
+$$
 
-Robot 2 then needs to maximize the angle on the circle given by $r = R_f$ where $d_2$, Robot 2's distance to the flag, is less than $d_1$.
+Plugging this value for $R_{1}$ into the integral and solving:
 
-To achieve this Robot 2 needs to move to the center of a chord of length $2d_1$
-The ideal 
+$$
+P(Robot 2) \approx 0.166186486474004
+$$
+
