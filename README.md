@@ -112,8 +112,8 @@ $$
 Next we integrate over (2) with respect to $R_f$ (the radius of the flag) while accounting for the PDF of $R_f$ to find the total probability of Robot 2 winning.
 
 $$
-{\large\int_{0}^{2\pi}\int_{0}^{\frac{R_1}{2}}} \frac{r}{\pi}\quad  dR_fd\theta \quad + \quad 
-{\large\int_{\frac{R_1}{2}}^{1}} \frac{2}{\pi}\arcsin\Bigg(\frac{|R_f - R_1|}{R_f}\Bigg)R_f\quad dR_f \tag{3}
+{\large\int_{0}^{2\pi}\int_{0}^{\frac{R_{1}}{2}}} \frac{r}{\pi}\quad  dR_{f}d\theta \quad + \quad 
+{\large\int_{\frac{R_{1}}{2}}^{1}} \frac{2}{\pi}\arcsin\Bigg(\frac{|R_{f} - R_{1}|}{R_{f}}\Bigg)R_{f}\quad dR_{f} \tag{3}
 $$
 
 ---
