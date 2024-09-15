@@ -102,12 +102,12 @@ $$
 
 With this strategy, we can construct another piecewise function that tells us Robot 2's chance of winning for any given value of $R_f$. This function returns the amount of the circle covered by Robot 2's winning disk over the total length of the circle.
 
-$$
+$$`
 P(\text{Robot 2}) = \begin{cases}
    1 &\text{if } \quad 0 \le R_f \le \frac{R_1}{2}\\
    {\large\frac{1}{\pi}}\arcsin\Big(\frac{|R_f - R_1|}{R_f}\Big) &\text{if } \quad\frac{R_1}{2} \lt R_f \le 1\\
 \end{cases} \tag{2}
-$$
+`$$
 
 Next we integrate over (2) with respect to $R_f$ (the radius of the flag) while accounting for the PDF of $R_f$ to find the total probability of Robot 2 winning.
 
