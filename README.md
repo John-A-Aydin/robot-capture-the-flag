@@ -86,14 +86,14 @@ If $R_f$ is greater than $\large\frac{R_1}{2}$, this point happens to be the cen
 
 Robot 2's strategy can be expressed by the piecewise function:
 
-$$
+$`
 R_2 =
    \begin{cases}
       0 &\text{if } \quad 0 \le R_f \le \frac{R_1}{2}\\
       R_1(2R_f-R_1) &\text{if } \quad\frac{R_1}{2} \lt R_f \le 1
    \end{cases}
 \tag{1}
-$$
+`$
 
 ---
 **Note:** We still don't know Robot 1's fixed radius $R_{1}$. This will come in later.
@@ -102,19 +102,19 @@ $$
 
 With this strategy, we can construct another piecewise function that tells us Robot 2's chance of winning for any given value of $R_f$. This function returns the amount of the circle covered by Robot 2's winning disk over the total length of the circle.
 
-$$`
+$`
 P(\text{Robot 2}) = \begin{cases}
    1 &\text{if } \quad 0 \le R_f \le \frac{R_1}{2}\\
    {\large\frac{1}{\pi}}\arcsin\Big(\frac{|R_f - R_1|}{R_f}\Big) &\text{if } \quad\frac{R_1}{2} \lt R_f \le 1\\
 \end{cases} \tag{2}
-`$$
+`$
 
 Next we integrate over (2) with respect to $R_f$ (the radius of the flag) while accounting for the PDF of $R_f$ to find the total probability of Robot 2 winning.
 
-$$
+$`
 {\large\int_{0}^{2\pi}\int_{0}^{\frac{R_{1}}{2}}} \frac{r}{\pi}\quad  dR_{f}d\theta \quad + \quad 
 {\large\int_{\frac{R_{1}}{2}}^{1}} \frac{2}{\pi}\arcsin\Bigg(\frac{|R_{f} - R_{1}|}{R_{f}}\Bigg)R_{f}\quad dR_{f} \tag{3}
-$$
+`$
 
 ---
 **Note:** In the left integral we are integrating over $R_{f}$ and $\theta$, but in the right integral we only integrate over $R_{f}$. This is because the bottom half of the piecewise function in (2) already accounts for $\theta$ by looking at the probability that a random value of $\theta$ will translate to a win for Robot 2.
